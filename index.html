@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="fi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ajanvaraus - Inky Vibes Tattoo</title>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://npmcdn.com/flatpickr/dist/l10n/fi.js"></script>
+  
+  <style>
+    body { font-family: ui-sans-serif, system-ui, sans-serif; background: #f6f7fb; color: #0b1220; padding: 20px; margin: 0; }
+    .form-container { max-width: 520px; margin: 0 auto; background: #fff; padding: 28px 24px; border-radius: 18px; box-shadow: 0 10px 26px rgba(16,24,40,.08); }
+    
+    .logo-container { text-align: center; margin-bottom: 20px; }
+    .logo-container img { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; box-shadow: 0 6px 16px rgba(16,24,40,.08); }
+    
+    .intro-text { font-size: 14px; color: #5a677a; margin-bottom: 24px; text-align: center; line-height: 1.5; }
+    
+    .field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+    label { font-size: 13px; font-weight: 700; color: #0b1220; }
+    label.req::after { content: " *"; color: #dc2626; font-weight: bold; }
+    input, select, textarea { padding: 12px 14px; border: 1px solid rgba(16,24,40,.12); border-radius: 12px; font-size: 15px; outline: none; background: #fff; box-sizing: border-box; transition: border-color 0.2s; }
+    input:focus, select:focus, textarea:focus { border-color: #0b1220; }
+    
+    /* AÇIK GRİ BİLGİ KUTULARI (Light Gray) */
+    .info-box { display: none; background: #f3f4f6; border: 1px solid #e5e7eb; padding: 14px; border-radius: 12px; font-size: 13.5px; color: #374151; margin-bottom: 18px; line-height: 1.45; }
+    .info-box strong { font-weight: 900; display: block; margin-bottom: 4px; color: #111827;}
+    
+    /* SİYAH DEGRADE PARLAYAN BUTON TASARIMI */
+    .btn { 
+      position: relative; overflow: hidden;
+      background: linear-gradient(135deg, #2b2b2b 0%, #000000 100%); 
+      color: #fff; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 800; 
+      cursor: pointer; width: 100%; margin-top: 10px; transition: transform 0.1s, box-shadow 0.2s; 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
+    }
+    /* Parlama Animasyonu */
+    .btn::after {
+      content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+      background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0) 100%);
+      transform: skewX(-25deg); animation: shine 3s infinite;
+    }
+    @keyframes shine { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
+    .btn:hover { background: linear-gradient(135deg, #404040 0%, #1a1a1a 100%); transform: translateY(-1px); box-shadow: 0 6px 14px rgba(0,0,0,0.3); }
+    .btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+    
+    /* HAREKETLİ YEŞİL TİK */
+    #successMessage { display: none; text-align: center; padding: 40px 20px; }
+    #successMessage p { color: #0b1220; line-height: 1.6; font-weight: 500; font-size: 16px; }
+    .checkmark { width: 60px; height: 60px; border-radius: 50%; display: block; stroke-width: 3.5; stroke: #16a34a; stroke-miterlimit: 10; margin: 0 auto 20px; box-shadow: inset 0px 0px 0px #16a34a; }
+    .checkmark__circle { stroke-dasharray: 166; stroke-dashoffset: 166; stroke-width: 3.5; stroke-miterlimit: 10; stroke: #16a34a; fill: none; animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards; }
+    .checkmark__check { transform-origin: 50% 50%; stroke-dasharray: 48; stroke-dashoffset: 48; animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.6s forwards; }
+    @keyframes stroke { 100% { stroke-dashoffset: 0; } }
+    
+    .help { font-size: 12px; color: #5a677a; margin-top: -4px; line-height: 1.35; }
+  </style>
+</head>
+<body>
+
+  <div class="form-container" id="formWrapper">
+    <div class="logo-container">
+      <!-- DİKKAT: YENİ GÜVENİLİR GOOGLE DRIVE FORMATI BURADA -->
+      <img src="https://lh3.googleusercontent.com/d/1YKLeFhAOJRd8vY-ZqAhu7RYTYnXqIdK5" alt="Inky Vibes Tattoo Logo">
+    </div>
+    <div class="intro-text">
+      Ajan varaaminen on helppoa ja nopeaa - varaa aikasi verkossa sinulle sopivaan hetkeen (vain ajanvarauksella).
+    </div>
+
+    <form id="publicBookingForm">
+      <div class="field">
+        <label class="req">Nimi ja Sukunimi</label>
+        <input type="text" id="custName" required placeholder="Koko nimi (esim. Matti Meikäläinen)">
+      </div>
+      <div class="field">
+        <label class="req">Sähköpostiosoite</label>
+        <input type="email" id="custEmail" required placeholder="esimerkki@sahkoposti.fi">
+      </div>
+      <div class="field">
+        <label class="req">Puhelin Numero</label>
+        <input type="tel" id="custPhone" value="+358" required>
+      </div>
+      
+      <div class="field">
+        <label class="req">Varaustyyppi</label>
+        <select id="bookingType" required>
+          <option value="tattoo" selected>Tatuointi Aika</option>
+          <option value="design">Tatuointi Suunnittelu Aika</option>
+        </select>
+      </div>
+
+      <!-- Bilgi Kutuları Light Gray (Açık Gri) -->
+      <div id="infoTattoo" class="info-box" style="display:block;">
+        <strong>Tatuointiaika (valmis idea)</strong>
+        Sinulla on valmis idea tai referenssikuva. Laajaa suunnittelua ei tarvita; tarvittavat pienet muutokset tehdään ajanvarauksen yhteydessä ennen tatuointia.
+      </div>
+      <div id="infoDesign" class="info-box">
+        <strong>Suunnitteluaika (suunnittelua vaativat tatuoinnit)</strong>
+        Sopii kaikille tatuoinneille, jotka vaativat suunnittelua ennen tatuointia (koosta riippumatta). Suunnittelemme tatuoinnin yhdessä ennen varsinaista tatuointiaikaa.
+      </div>
+
+      <div class="field">
+        <label class="req">Toivottu Varaus Päivä</label>
+        <input type="text" id="bookingDate" placeholder="Valitse päivä" required readonly style="background-color: #fff; cursor: pointer;">
+      </div>
+      
+      <div class="field">
+        <label class="req">Toivottu Aika</label>
+        <select id="bookingTime" required>
+          <option value="10:00" selected>10:00</option>
+          <option value="11:00">11:00</option>
+          <option value="12:00">12:00</option>
+          <option value="13:00">13:00</option>
+          <option value="14:00">14:00</option>
+          <option value="15:00">15:00</option>
+          <option value="16:00">16:00</option>
+          <option value="17:00">17:00</option>
+          <option value="18:00">18:00</option>
+          <option value="19:00">19:00</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Muistiinpanoja</label>
+        <textarea id="bookingNotes" rows="3" placeholder="Jos haluat, voit lisäta ideoita tai tarkempia tietoja varauksestasi."></textarea>
+      </div>
+
+      <div class="field">
+        <label>Valitse tiedosto</label>
+        <div class="help">Jos sinulla on, lisääthän mahdolliset referenssi- tai inspiraatiokuvat. (Maks. 5MB)</div>
+        <input type="file" id="bookingFiles" accept="image/*" multiple>
+      </div>
+
+      <button type="submit" class="btn" id="submitBtn">Lähetä</button>
+    </form>
+  </div>
+
+  <div class="form-container" id="successMessage">
+    <!-- Animasyonlu Yeşil Tik -->
+    <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+      <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+      <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+    </svg>
+    <p>Kiitos!<br>Ajanvarauspyyntösi on lähetetty<br>onnistuneesti. Olemme sinuun yhteydessä<br>pian ja lähetämme vahvistuksen<br>sähköpostiisi.</p>
+  </div>
+
+  <script>
+    // 🔴 KENDİ URL'NİZİ BURAYA YAPIŞTIRIN!
+    const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyc45YkgjuRcdx5X6hokMpA3L-wCtoGV0EwH6SjSRqFY9vUVUJ8yUdcoyzERdkRjY-oEA/exec";
+
+    // Dinamik Bilgi Kutusu
+    document.getElementById('bookingType').addEventListener('change', function() {
+      document.getElementById('infoTattoo').style.display = this.value === 'tattoo' ? 'block' : 'none';
+      document.getElementById('infoDesign').style.display = this.value === 'design' ? 'block' : 'none';
+    });
+
+    async function initCalendar() {
+      let disableRules = [];
+      // KURAL 1: Pazar Günlerini (0) Engelle
+      disableRules.push(function(date) { return (date.getDay() === 0); });
+
+      try {
+        const response = await fetch(APP_SCRIPT_URL + "?action=getUnavailableDates");
+        const data = await response.json();
+        
+        if (data.ok) {
+          data.bookedDates.forEach(date => disableRules.push(date));
+          data.closedRanges.forEach(range => { disableRules.push({ from: range.from, to: range.to }); });
+        }
+      } catch (error) { console.error("Takvim verileri yüklenemedi:", error); }
+
+      flatpickr("#bookingDate", {
+        locale: "fi", // Fince ve Pazartesi başlar
+        dateFormat: "Y-m-d", 
+        altInput: true,
+        altFormat: "d.m.Y",
+        minDate: "today",
+        disable: disableRules,
+      });
+    }
+
+    // Dosyaları Base64'e Çevirme Fonksiyonu
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
+    }
+
+    document.getElementById('publicBookingForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      btn.innerText = "Lähetetään...";
+      btn.disabled = true;
+
+      // Resim Dosyalarını Okuma ve Göndermeye Hazırlama
+      const fileInput = document.getElementById('bookingFiles');
+      let imagesPayload = [];
+      
+      if (fileInput.files.length > 0) {
+        for (let i = 0; i < fileInput.files.length; i++) {
+          const file = fileInput.files[i];
+          const b64 = await fileToBase64(file);
+          imagesPayload.push({
+            name: file.name,
+            mime: file.type,
+            dataBase64: b64.split(',')[1] // Sadece data kısmını gönder
+          });
+        }
+      }
+
+      const payload = {
+        custName: document.getElementById('custName').value,
+        custEmail: document.getElementById('custEmail').value,
+        custPhone: document.getElementById('custPhone').value,
+        bookingType: document.getElementById('bookingType').value,
+        bookingDate: document.getElementById('bookingDate').value,
+        bookingTime: document.getElementById('bookingTime').value,
+        bookingNotes: document.getElementById('bookingNotes').value,
+        images: imagesPayload // Resimleri yükle
+      };
+
+      try {
+        const res = await fetch(APP_SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "submitPublicBooking", payload: payload })
+        });
+        const data = await res.json();
+        
+        if(data.ok) {
+          document.getElementById('formWrapper').style.display = 'none';
+          document.getElementById('successMessage').style.display = 'block';
+        } else {
+          alert("Virhe: " + data.error);
+          btn.innerText = "Lähetä";
+          btn.disabled = false;
+        }
+      } catch(err) {
+        alert("Yhteysvirhe. Yritä uudelleen.");
+        btn.innerText = "Lähetä";
+        btn.disabled = false;
+      }
+    });
+
+    initCalendar();
+  </script>
+</body>
+</html>
